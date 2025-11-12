@@ -1,15 +1,12 @@
-// FILE: src/components/AdBanner.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSubscription } from '../iap/SubscriptionProvider';
 
 type Props = { height?: number };
-
-const AdBanner: React.FC<Props> = ({ height = 60 }) => {
+export const AdBanner: React.FC<Props> = ({ height = 64 }) => {
   const { isPremium } = useSubscription();
-  if (isPremium) return null; // Premium -> ẩn quảng cáo
+  if (isPremium) return null;
 
-  // TODO: thay bằng SDK thật (AdMob/AppLovin/ironSource...)
   return (
     <View style={[styles.container, { height }]}>
       <Text style={styles.text}>Ad Banner (placeholder)</Text>
@@ -19,15 +16,19 @@ const AdBanner: React.FC<Props> = ({ height = 60 }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 12,
-    backgroundColor: '#111827',
-    borderRadius: 10,
+    marginTop: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#EEF2F7',
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2
   },
-  text: { color: '#9CA3AF', fontSize: 12 }
+  text: { color: '#6B7280', fontSize: 12, fontWeight: '600' }
 });
-
-export { AdBanner };
-export default AdBanner;

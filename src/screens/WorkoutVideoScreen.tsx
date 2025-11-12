@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, Dimensions, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import Video from 'react-native-video';
 import { useTranslation } from 'react-i18next';
-
+import { WebView } from 'react-native-webview';
+import { useKeepAwake } from '@sayem314/react-native-keep-awake';
 type RootStackParamList = {
   WorkoutVideo: {
     programId: string;
@@ -16,10 +16,11 @@ type RootStackParamList = {
 type WorkoutVideoRouteProp = RouteProp<RootStackParamList, 'WorkoutVideo'>;
 
 export const WorkoutVideoScreen: React.FC = () => {
+  useKeepAwake();
   const { t } = useTranslation();
   const route = useRoute<WorkoutVideoRouteProp>();
   const { videoUrl, sessionKey } = route.params;
-
+  console.log(route.params);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
 
@@ -27,33 +28,15 @@ export const WorkoutVideoScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {loading && !error && (
-        <View style={styles.center}>
-          <ActivityIndicator />
-          <Text style={styles.label}>{t('video.loading')}</Text>
-        </View>
-      )}
-
-      {error && (
-        <View style={styles.center}>
-          <Text style={styles.error}>{t('video.error')}</Text>
-        </View>
-      )}
-
-      {!error && (
-        <Video
-          source={{ uri: videoUrl }}
-          style={[styles.video, { height }]}
-          resizeMode="contain"
-          controls
-          onLoad={() => setLoading(false)}
-          onError={() => {
-            setLoading(false);
-            setError(true);
-          }}
-        />
-      )}
-
+      <WebView
+        style={{ flex: 1 }}
+        originWhitelist={['*']}
+        source={{ uri: 'file:///android_asset/' + videoUrl }}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        allowsFullscreenVideo={true}
+        allowsInlineMediaPlayback={true}
+      />
       <Text style={styles.workoutName}>
         {t(`workouts.${sessionKey}`)}
       </Text>

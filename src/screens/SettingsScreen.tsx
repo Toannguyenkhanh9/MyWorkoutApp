@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import i18n, { LANG_KEY } from '../i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import { scheduleDailyReminder } from '../notifications/reminder';
+
 
 const LANGS = [
   { code: 'vi', label: 'Tiếng Việt' },
@@ -22,7 +24,7 @@ const LANGS = [
   { code: 'fil', label: 'Filipino' },
   { code: 'pt', label: 'Português' }
 ];
-
+const REMIND_KEY = 'app:remind';
 export const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
   const current = i18n.language.slice(0, 2);
@@ -31,7 +33,29 @@ export const SettingsScreen: React.FC = () => {
     await AsyncStorage.setItem(LANG_KEY, code);
     await i18n.changeLanguage(code);
   };
+const [time, setTime] = useState<{ h: number; m: number }>({ h: 20, m: 0 });
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const json = await AsyncStorage.getItem(REMIND_KEY);
+        if (json) setTime(JSON.parse(json));
+      } catch {}
+    })();
+  }, []);
+
+  const saveAndSchedule = async (h: number, m: number) => {
+    const next = { h, m };
+    setTime(next);
+    await AsyncStorage.setItem(REMIND_KEY, JSON.stringify(next));
+    await scheduleDailyReminder(h, m);
+  };
+
+  const toggleDemo = async () => {
+    // Demo gọn: đổi giữa 20:00 và 07:00 để test nhanh
+    const next = time.h === 20 ? { h: 7, m: 0 } : { h: 20, m: 0 };
+    await saveAndSchedule(next.h, next.m);
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('settings.title')}</Text>
@@ -48,6 +72,16 @@ export const SettingsScreen: React.FC = () => {
         )}
         ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
       />
+            <View style={{ height: 16 }} />
+
+      <Text style={styles.title}>{t('settings.title')}</Text>
+      <Text style={styles.caption}>Daily reminder</Text>
+
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={toggleDemo}>
+        <Text style={styles.lang}>
+          ⏰ {String(time.h).padStart(2,'0')}:{String(time.m).padStart(2,'0')} (tap to toggle 20:00/07:00)
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

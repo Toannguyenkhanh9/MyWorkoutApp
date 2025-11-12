@@ -5,40 +5,34 @@ import { WorkoutDay } from '../data/programs';
 
 const WEEKDAYS_KEYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-interface Props {
-  day: WorkoutDay;
-  completed: boolean;
-  onPress: () => void;
-}
+interface Props { day: WorkoutDay; completed: boolean; onPress: () => void; }
 
 export const DayItem: React.FC<Props> = ({ day, completed, onPress }) => {
   const { t } = useTranslation();
   const weekday = WEEKDAYS_KEYS[day.weekdayIndex];
+  const isRest = !!day.isRest;
 
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={isRest}
+      activeOpacity={isRest ? 1 : 0.7}
       style={[
         styles.container,
-        completed && styles.completed
+        isRest ? styles.rest : (completed && styles.completed)
       ]}
     >
       <View style={styles.left}>
-        <Text style={styles.dayTitle}>
-          {t('program.daysPrefix', {
-            day: day.dayNumber,
-            weekday
-          })}
+        <Text style={[styles.dayTitle, isRest && styles.restTitle]}>
+          {t('program.daysPrefix', { day: day.dayNumber, weekday })}
         </Text>
-        <Text style={styles.workoutName}>
-          {t(`workouts.${day.sessionKey}`)}
+        <Text style={[styles.workoutName, isRest && styles.restText]}>
+          {isRest ? t('workouts.rest') : `${day.name} • ${day.durationMin}’`}
         </Text>
       </View>
-      {completed && (
-        <Text style={styles.completedText}>
-          ✓
-        </Text>
-      )}
+
+      {!isRest && completed && <Text style={styles.completedText}>✓</Text>}
+      {isRest && <Text style={styles.restIcon}>🛌</Text>}
     </TouchableOpacity>
   );
 };
@@ -46,31 +40,32 @@ export const DayItem: React.FC<Props> = ({ day, completed, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 14,
-    marginBottom: 8,
-    borderRadius: 12,
-    backgroundColor: '#111827',
+    marginBottom: 10,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EEF2F7',
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2
   },
   completed: {
-    backgroundColor: '#065F46'
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0'
   },
-  left: {
-    flex: 1
+  rest: {
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E5E7EB',
   },
-  dayTitle: {
-    color: '#F9FAFB',
-    fontWeight: '600',
-    fontSize: 14
-  },
-  workoutName: {
-    color: '#9CA3AF',
-    fontSize: 12,
-    marginTop: 2
-  },
-  completedText: {
-    color: '#BBF7D0',
-    fontSize: 18,
-    marginLeft: 8
-  }
+  left: { flex: 1 },
+  dayTitle: { color: '#111827', fontWeight: '700', fontSize: 14 },
+  restTitle: { color: '#334155' },
+  workoutName: { color: '#6B7280', fontSize: 12, marginTop: 4 },
+  restText: { color: '#94A3B8' },
+  completedText: { color: '#059669', fontSize: 18, marginLeft: 8 },
+  restIcon: { color: '#94A3B8', fontSize: 16, marginLeft: 8 }
 });

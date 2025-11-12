@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+
+<body>
+
+    <h3 style="text-align: center;">
+        <strong>Speed 3.0</strong>
+
+    </h3>
+    <iframe
+        src="https://onedrive.live.com/embed?cid=D0032967E9AD2AC4&resid=D0032967E9AD2AC4%21196380&authkey=AD2SVURVWCr7hIg"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" scrolling="no"
+        allowfullscreen></iframe>
+</body>
+
+</html>
+<script type="text/javascript">
+    var userLang = navigator.language || navigator.userLanguage;
+    switch (userLang) {
+        case "vi-VN":
+            document.getElementById('internet').innerHTML = "Bạn cần mạng để xem video này";
+            document.getElementById('version').innerHTML = "Nếu bạn muốn xem video ở chế độ toàn màn hình, vui lòng sử dụng <a href='https://play.google.com/store/apps/details?id=com.homeworkout.toannguyenkhanh'>phiên bản trả phí</a> để hỗ trợ các nhà phát triển";
+            break;
+        case "es-AR":
+        case "es-CL":
+        case "es-CO":
+        case "es-ES":
+        case "es-MX":
+        case "es-US":
+            document.getElementById('internet').innerHTML = "Necesitas internet para reproducir este video";
+            document.getElementById('version').innerHTML = "si desea ver el video en pantalla completa, use <a href='https://play.google.com/store/apps/details?id=com.homeworkout.toannguyenkhanh'>este pago versión</a> para apoyar al desarrollador";
+            break;
+        default:
+            document.getElementById('internet').innerHTML = "You need internet to play this video";
+            document.getElementById('version').innerHTML = "if you want to watch the video in full screen please use <a href='https://play.google.com/store/apps/details?id=com.homeworkout.toannguyenkhanh'>paid version</a> to support the developer"
+            break;
+    }
+</script>

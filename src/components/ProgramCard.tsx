@@ -8,8 +8,8 @@ export const ProgramCard: React.FC<Props> = ({ program, onPress }) => {
   const { t } = useTranslation();
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
-      <View style={[styles.iconWrap, { backgroundColor: program.iconColor + '33' }]}>
-        <Image source={program.icon} style={styles.icon} resizeMode="contain" />
+      <View style={[styles.iconWrap, { backgroundColor: program.iconColor + '1A' }]}>
+        <Image source={program.icon} style={styles.icon} resizeMode="cover" />
       </View>
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{t(program.titleKey)}</Text>
@@ -21,12 +21,24 @@ export const ProgramCard: React.FC<Props> = ({ program, onPress }) => {
 };
 const styles = StyleSheet.create({
   card: {
-    padding: 16, borderRadius: 18, backgroundColor: '#111827',
-    marginBottom: 12, flexDirection: 'row', alignItems: 'center'
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EEF2F7',
+    // shadow
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3
   },
-  iconWrap: { width: 56, height: 56, borderRadius: 16, marginRight: 16, alignItems: 'center', justifyContent: 'center' },
-  icon: { width: 42, height: 42 },
-  title: { fontSize: 16, fontWeight: '700', color: '#F9FAFB' },
-  days: { fontSize: 12, color: '#93A3B5', marginTop: 3 },
-  chevron: { fontSize: 28, color: '#6B7280', marginLeft: 8 }
+  iconWrap: { width: 56, height: 56, borderRadius: 14, marginRight: 16, overflow: 'hidden' },
+  icon: { width: '100%', height: '100%' },
+  title: { fontSize: 16, fontWeight: '800', color: '#0F172A' },
+  days: { fontSize: 12, color: '#6B7280', marginTop: 4 },
+  chevron: { fontSize: 28, color: '#94A3B8', marginLeft: 8 }
 });
