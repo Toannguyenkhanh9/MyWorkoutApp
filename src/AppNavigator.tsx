@@ -13,6 +13,7 @@ import { PremiumScreen } from './screens/PremiumScreen';
 import { ProgramDetailScreen } from './screens/ProgramDetailScreen';
 import { WorkoutVideoScreen } from './screens/WorkoutVideoScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import { UserProfileScreen } from './screens/UserProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ const MainStack = () => (
     <Stack.Screen name="ProgramDetail" component={ProgramDetailScreen} options={{ headerTitle: '' }} />
     <Stack.Screen name="WorkoutVideo" component={WorkoutVideoScreen} options={{ title: 'Workout' }} />
     <Stack.Screen name="WorkoutWeb" component={WorkoutVideoScreen as any} options={{ title: 'Workout' }} />
+    <Stack.Screen name="UserProfile" component={UserProfileScreen as any} options={{ title: 'Hồ Sơ' }} />
   </Stack.Navigator>
 );
 
