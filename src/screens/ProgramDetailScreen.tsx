@@ -6,26 +6,48 @@ import { useTranslation } from 'react-i18next';
 import { PROGRAMS, generateProgramDays, WorkoutDay } from '../data/programs';
 import { DayItem } from '../components/DayItem';
 import { AdBanner } from '../components/AdBanner';
+import { markActive } from '../store/activePrograms';
 
 type Section = { title: string; data: WorkoutDay[] };
 
 export const ProgramDetailScreen: React.FC = () => {
   const { t } = useTranslation();
-  const route = useRoute<any>(); const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const navigation = useNavigation<any>();
   const { programId } = route.params || {};
-  const program = PROGRAMS.find((p) => p.id === programId);
+  const program = PROGRAMS.find(p => p.id === programId);
 
-  const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
+  const [completedDays, setCompletedDays] = useState<Record<string, boolean>>(
+    {},
+  );
   const STORAGE_KEY = `program:${programId}:completed`;
 
-  useEffect(() => { if (program) navigation.setOptions({ title: t(program.titleKey) }); }, [navigation, program, t]);
+  useEffect(() => {
+    if (program) navigation.setOptions({ title: t(program.titleKey) });
+  }, [navigation, program, t]);
 
-  useEffect(() => { (async () => {
-    try { const json = await AsyncStorage.getItem(STORAGE_KEY); if (json) setCompletedDays(JSON.parse(json)); } catch {}
-  })(); }, [STORAGE_KEY]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const json = await AsyncStorage.getItem(STORAGE_KEY);
+        if (json) setCompletedDays(JSON.parse(json));
+      } catch {}
+    })();
+  }, [STORAGE_KEY]);
+  useEffect(() => {
+    if (program) {
+      navigation.setOptions({ title: t(program.titleKey) });
+      // ✅ đánh dấu chương trình là đang tập
+      markActive(program.id).catch(() => {});
+    }
+  }, [navigation, program, t]);
 
   if (!program) {
-    return <View style={styles.container}><Text style={{ color: '#EF4444', padding: 16 }}>Program not found</Text></View>;
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: '#EF4444', padding: 16 }}>Program not found</Text>
+      </View>
+    );
   }
 
   const days = useMemo(() => generateProgramDays(program), [program]);
@@ -44,10 +66,12 @@ export const ProgramDetailScreen: React.FC = () => {
     if (day.isRest) return;
     const updated = { ...completedDays, [day.id]: true };
     setCompletedDays(updated);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(()=>{});
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(() => {});
     navigation.navigate('WorkoutWeb', {
-      programId, dayId: day.id, sessionKey: day.sessionKey,
-      videoUrl: day.webUrl ?? day.videoUrl
+      programId,
+      dayId: day.id,
+      sessionKey: day.sessionKey,
+      videoUrl: day.webUrl ?? day.videoUrl,
     });
   };
 
@@ -55,21 +79,31 @@ export const ProgramDetailScreen: React.FC = () => {
     <View style={styles.container}>
       <SectionList
         sections={sections}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <DayItem day={item} completed={!!completedDays[item.id]} onPress={() => onPressDay(item)} />
+          <DayItem
+            day={item}
+            completed={!!completedDays[item.id]}
+            onPress={() => onPressDay(item)}
+          />
         )}
-        renderSectionHeader={({ section }) => <Text style={styles.section}>{section.title}</Text>}
+        renderSectionHeader={({ section }) => (
+          <Text style={styles.section}>{section.title}</Text>
+        )}
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.programTitle}>{t(program.titleKey)}</Text>
-            <Text style={styles.programMeta}>{t('home.daysSuffix', { count: program.durationDays })}</Text>
+            <Text style={styles.programMeta}>
+              {t('home.daysSuffix', { count: program.durationDays })}
+            </Text>
           </View>
         }
         stickySectionHeadersEnabled
         contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
       />
-      <View style={{ paddingHorizontal: 16 }}><AdBanner /></View>
+      <View style={{ paddingHorizontal: 16 }}>
+        <AdBanner />
+      </View>
     </View>
   );
 };
@@ -84,6 +118,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 12,
     marginBottom: 8,
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
