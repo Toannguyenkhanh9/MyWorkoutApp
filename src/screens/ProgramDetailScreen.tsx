@@ -7,11 +7,16 @@ import { PROGRAMS, generateProgramDays, WorkoutDay } from '../data/programs';
 import { DayItem } from '../components/DayItem';
 import { AdBanner } from '../components/AdBanner';
 import { markActive } from '../store/activePrograms';
+import { gateWorkout } from '../ads/adGate';
+import { useSubscription } from '../iap/SubscriptionProvider';
+import { useToast } from '../ui/Toast';
 
 type Section = { title: string; data: WorkoutDay[] };
 
 export const ProgramDetailScreen: React.FC = () => {
+  const { isPremium } = useSubscription?.() || { isPremium: false };
   const { t } = useTranslation();
+    const toast = useToast();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { programId } = route.params || {};
@@ -62,8 +67,13 @@ export const ProgramDetailScreen: React.FC = () => {
     return out;
   }, [days, t]);
 
-  const onPressDay = (day: WorkoutDay) => {
+  const onPressDay = async (day: WorkoutDay) => {
     if (day.isRest) return;
+    const ok = await gateWorkout({ isPremium, startTrialOnFirstUse: true });
+    if (!ok) {
+         toast.show(t('ads.need_full', 'Bạn cần xem hết quảng cáo để tiếp tục'));
+      return;
+    }
     const updated = { ...completedDays, [day.id]: true };
     setCompletedDays(updated);
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(() => {});

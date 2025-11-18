@@ -1,3 +1,4 @@
+// FILE: src/screens/SettingsScreen.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
@@ -48,7 +49,6 @@ export const SettingsScreen: React.FC = () => {
   const [time, setTime] = useState<{ h: number; m: number }>({ h: 20, m: 0 });
 
   const screenH = Dimensions.get('window').height;
-  // Sheet cao tối đa 85% màn hình, nhưng không vượt 560 và không thấp hơn 360
   const SHEET_HEIGHT = Math.max(360, Math.min(screenH * 0.85, 560));
 
   const currentLangLabel = useMemo(
@@ -85,14 +85,11 @@ export const SettingsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('settings.title')}</Text>
+      <Text style={styles.title}>{t('more.title', 'More')}</Text>
       <Text style={styles.caption}>{t('settings.choose')}</Text>
 
-      {/* Select Ngôn ngữ */}
-      <TouchableOpacity
-        style={[styles.row, styles.rowActive]}
-        onPress={() => setShowLangPicker(true)}
-      >
+      {/* Ngôn ngữ */}
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={() => setShowLangPicker(true)}>
         <Text style={styles.lang}>🌐 {t('settings.language') || 'Language'}</Text>
         <Text style={styles.value}>{currentLangLabel}</Text>
         <Text style={styles.chev}>›</Text>
@@ -101,7 +98,6 @@ export const SettingsScreen: React.FC = () => {
       <View style={{ height: 16 }} />
 
       {/* Daily reminder */}
-      <Text style={styles.title}>{t('settings.title')}</Text>
       <Text style={styles.caption}>Daily reminder</Text>
       <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={toggleDemo}>
         <Text style={styles.lang}>
@@ -110,13 +106,24 @@ export const SettingsScreen: React.FC = () => {
       </TouchableOpacity>
 
       {/* Hồ sơ */}
-      <TouchableOpacity
-        style={[styles.row, styles.rowActive]}
-        onPress={() => navigation.navigate('UserProfile')}
-      >
-        <Text style={styles.lang}>👤 Hồ sơ người dùng</Text>
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={() => navigation.navigate('UserProfile')}>
+        <Text style={styles.lang}>👤 {t('profile.title', 'Hồ sơ người dùng')}</Text>
         <Text style={styles.chev}>›</Text>
       </TouchableOpacity>
+
+      {/* Hướng dẫn & Premium */}
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={() => navigation.navigate('Guide')}>
+        <Text style={styles.lang}>📖 {t('tabs.guide', 'Hướng dẫn')}</Text>
+        <Text style={styles.chev}>›</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={() => navigation.navigate('Premium')}>
+        <Text style={styles.lang}>⭐️ {t('tabs.premium', 'Premium')}</Text>
+        <Text style={styles.chev}>›</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.row, styles.rowActive]} onPress={() => navigation.navigate('WeightChart')}>
+  <Text style={styles.lang}>📈 Theo dõi cân nặng</Text>
+  <Text style={styles.chev}>›</Text>
+</TouchableOpacity>
 
       {/* Modal chọn ngôn ngữ */}
       <Modal
@@ -126,18 +133,13 @@ export const SettingsScreen: React.FC = () => {
         onRequestClose={() => setShowLangPicker(false)}
       >
         <Pressable style={styles.overlay} onPress={() => setShowLangPicker(false)}>
-          {/* Sheet: chiều cao cố định để không bị co, danh sách chiếm phần còn lại */}
           <Pressable
-            style={[
-              styles.sheet,
-              { height: SHEET_HEIGHT, paddingBottom: insets.bottom + 8 },
-            ]}
+            style={[styles.sheet, { height: SHEET_HEIGHT, paddingBottom: insets.bottom + 8 }]}
             onPress={() => {}}
           >
             <View style={styles.sheetHandle} />
             <Text style={styles.sheetTitle}>{t('settings.language') || 'Language'}</Text>
 
-            {/* Danh sách NGÔN NGỮ luôn có flex:1 để hiển thị */}
             <View style={{ flex: 1, minHeight: 200 }}>
               <ScrollView
                 style={{ flex: 1 }}
@@ -166,10 +168,7 @@ export const SettingsScreen: React.FC = () => {
               </ScrollView>
             </View>
 
-            <TouchableOpacity
-              style={styles.cancelBtn}
-              onPress={() => setShowLangPicker(false)}
-            >
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowLangPicker(false)}>
               <Text style={styles.cancelTxt}>{t('common.cancel', 'Cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
@@ -179,50 +178,60 @@ export const SettingsScreen: React.FC = () => {
   );
 };
 
-/* ========== Styles ========== */
+/* ========== Styles (LIGHT THEME) ========== */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020817', padding: 16 },
-  title: { fontSize: 22, fontWeight: '800', color: '#F9FAFB' },
-  caption: { color: '#9CA3AF', marginTop: 6, marginBottom: 12 },
+  container: { flex: 1, backgroundColor: '#F6F7FB', padding: 16 },
+  title: { fontSize: 22, fontWeight: '900', color: '#0F172A' },
+  caption: { color: '#6B7280', marginTop: 6, marginBottom: 12 },
 
   row: {
     padding: 14,
-    borderRadius: 12,
-    backgroundColor: '#111827',
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EEF2F7',
+    // shadow nhẹ
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
-  rowActive: { backgroundColor: '#111827' },
-  lang: { color: '#E5E7EB', fontSize: 14, flex: 1, fontWeight: '700' },
-  value: { color: '#9CA3AF', fontSize: 14, marginRight: 8 },
+  rowActive: { backgroundColor: '#FFFFFF' },
+  lang: { color: '#0F172A', fontSize: 14, flex: 1, fontWeight: '800' },
+  value: { color: '#64748B', fontSize: 14, marginRight: 8 },
   chev: { color: '#94A3B8', fontSize: 22 },
 
-  tick: { color: '#34D399', fontSize: 18, marginLeft: 8 },
+  tick: { color: '#059669', fontSize: 18, marginLeft: 8 },
 
-  // Modal / Bottom sheet
+  // Modal / Bottom sheet (light)
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#0B1220',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     paddingTop: 8,
     paddingHorizontal: 12,
+    borderTopWidth: 1,
+    borderColor: '#E5E7EB',
   },
   sheetHandle: {
     alignSelf: 'center',
     width: 40,
     height: 4,
     borderRadius: 999,
-    backgroundColor: '#334155',
+    backgroundColor: '#CBD5E1',
     marginBottom: 10,
   },
   sheetTitle: {
-    color: '#E5E7EB',
-    fontWeight: '800',
+    color: '#0F172A',
+    fontWeight: '900',
     fontSize: 16,
     paddingHorizontal: 4,
     marginBottom: 8,
@@ -230,28 +239,34 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: '#1f2937',
+    borderColor: '#EEF2F7',
     marginBottom: 8,
   },
-  itemActive: { borderColor: '#10B981', backgroundColor: '#0B3B2E' },
-  itemText: { color: '#E5E7EB', fontSize: 14, flex: 1 },
-  itemTextActive: { color: '#D1FAE5', fontWeight: '800' },
+  itemActive: { borderColor: '#10B981', backgroundColor: '#ECFDF5' },
+  itemText: { color: '#111827', fontSize: 14, flex: 1 },
+  itemTextActive: { color: '#065F46', fontWeight: '800' },
 
   cancelBtn: {
     marginTop: 6,
-    backgroundColor: '#111827',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     alignItems: 'center',
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#1f2937',
+    borderColor: '#E5E7EB',
+    // shadow nhẹ
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
-  cancelTxt: { color: '#E5E7EB', fontWeight: '700' },
+  cancelTxt: { color: '#0F172A', fontWeight: '800' },
 });
 
 export default SettingsScreen;

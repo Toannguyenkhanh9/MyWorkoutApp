@@ -1,34 +1,27 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import { Platform } from 'react-native';
+import { ADMOB } from '../ads/adConfig';
+import { canShowBanner } from '../ads/adGate';
 import { useSubscription } from '../iap/SubscriptionProvider';
 
-type Props = { height?: number };
-export const AdBanner: React.FC<Props> = ({ height = 64 }) => {
-  const { isPremium } = useSubscription();
-  if (isPremium) return null;
+const unitId = Platform.OS === 'android' ? ADMOB.android.banner : ADMOB.ios.banner;
 
+export const AdBanner: React.FC = () => {
+  const { isPremium } = useSubscription?.() || { isPremium: false };
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setShow(await canShowBanner(isPremium));
+    })();
+  }, [isPremium]);
+
+  if (!show) return null;
   return (
-    <View style={[styles.container, { height }]}>
-      <Text style={styles.text}>Ad Banner (placeholder)</Text>
+    <View style={{ alignItems: 'center' }}>
+      <BannerAd unitId={unitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: '#EEF2F7',
-    shadowColor: '#0F172A',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2
-  },
-  text: { color: '#6B7280', fontSize: 12, fontWeight: '600' }
-});
