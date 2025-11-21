@@ -69,7 +69,7 @@ export const ProgramDetailScreen: React.FC = () => {
 
   const onPressDay = async (day: WorkoutDay) => {
     if (day.isRest) return;
-    const ok = await gateWorkout({ isPremium, startTrialOnFirstUse: true });
+    const ok = await gateWorkout({ isPremium, startTrialOnFirstUse: false });
     if (!ok) {
          toast.show(t('ads.need_full', 'Bạn cần xem hết quảng cáo để tiếp tục'));
       return;

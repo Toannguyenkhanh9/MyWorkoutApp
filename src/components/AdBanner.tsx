@@ -14,7 +14,8 @@ export const AdBanner: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      setShow(await canShowBanner(isPremium));
+      //setShow(await canShowBanner(isPremium));
+      setShow(true);
     })();
   }, [isPremium]);
 

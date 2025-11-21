@@ -22,15 +22,16 @@ function create() {
 
   // ✅ ĐÚNG: dùng RewardedAdEventType.LOADED
   ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
+    console.log('[AD] rewarded loaded');
     loaded = true;
     loading = false;
   });
 
   // (tuỳ phiên bản lib, ERROR có thể là AdEventType.ERROR – vẫn OK)
-  ad.addAdEventListener(AdEventType.ERROR, () => {
-    loaded = false;
-    loading = false;
-  });
+ad.addAdEventListener(AdEventType.ERROR, (e) => {
+  console.log('[AD] error', e);
+  loaded = false; loading = false;
+});
 
   ad.load();
   loading = true;

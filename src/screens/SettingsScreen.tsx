@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { scheduleDailyReminder } from '../notifications/reminder';
 import { useNavigation } from '@react-navigation/native';
+import { showRewarded, preloadRewarded } from '../ads/rewarded';
 
 const LANGS = [
   { code: 'vi', label: 'Tiếng Việt' },
@@ -125,6 +126,20 @@ export const SettingsScreen: React.FC = () => {
   <Text style={styles.chev}>›</Text>
 </TouchableOpacity>
 
+<TouchableOpacity style={[styles.row, styles.rowActive]} onPress={async () => {
+  await AsyncStorage.removeItem('ads:trialStartAt'); // bỏ trial
+  preloadRewarded();
+  const ok = await showRewarded();
+  console.log('Rewarded result:', ok);
+}}>
+  <Text style={styles.lang}>🧪 Test Rewarded (bỏ trial)</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={[styles.row, styles.rowActive]} onPress={async () => {
+  await AsyncStorage.removeItem('ads:trialStartAt');
+}}>
+  <Text style={styles.lang}>♻️ Reset 7-day trial</Text>
+</TouchableOpacity>
       {/* Modal chọn ngôn ngữ */}
       <Modal
         visible={showLangPicker}
