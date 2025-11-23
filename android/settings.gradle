@@ -1,6 +1,34 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement {
+  repositories { gradlePluginPortal(); mavenCentral(); google() }
+  includeBuild("../node_modules/@react-native/gradle-plugin")
+
+  // PIN phiên bản (8.11.1) tại đây
+  plugins {
+    id("com.android.application") version "8.11.1"
+    id("com.android.library")     version "8.11.1"
+    id("org.jetbrains.kotlin.android") version "1.9.24"
+  }
+
+  // IN RA LOG xem Gradle đang resolve version nào
+  resolutionStrategy {
+    eachPlugin {
+      println(">> Resolving plugin: " + requested.id.id + " v=" + (requested.version ?: "(none)"))
+      if (requested.id.id == "com.android.application" || requested.id.id == "com.android.library") {
+        useVersion("8.11.1")
+        println(">> Forcing AGP 8.11.1 via settings.gradle")
+      }
+      if (requested.id.id == "org.jetbrains.kotlin.android") {
+        useVersion("1.9.24")
+      }
+    }
+  }
+}
+
 plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-rootProject.name = 'MyWorkoutApp'
-include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+  ex.autolinkLibrariesFromCommand()
+}
+
+rootProject.name = "MyWorkoutApp"
+include(":app")
